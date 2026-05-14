@@ -1,0 +1,2820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUNG TUNG SAHUR - El Brainrot Supremo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0f2e 50%, #0f1a2e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #ddd;
+        }
+
+        #canvas-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* ===== PANTALLA DE AUTENTICACIÓN ===== */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .auth-container.hidden {
+            display: none;
+        }
+
+        .auth-box {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8), 0 0 100px rgba(0, 255, 255, 0.6);
+            border: 5px solid #ff00ff;
+            max-width: 450px;
+            width: 90%;
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5) rotate(-10deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .auth-box h1 {
+            color: #ff00ff;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px #00ffff;
+            animation: bounce 0.4s infinite;
+        }
+
+        .auth-box p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            font-size: 1em;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s;
+            background: rgba(255, 0, 255, 0.05);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-family: 'Comic Sans MS', cursive;
+            animation: buttonPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00);
+            background-size: 300% 300%;
+            color: white;
+            border: 3px solid #ff00ff;
+            text-shadow: 2px 2px #000;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px #ff00ff, 0 0 50px #00ffff;
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            background-size: 300% 300%;
+            color: white;
+            border: 3px solid #00ffff;
+            text-shadow: 2px 2px #000;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 0 30px #00ffff;
+            transform: scale(1.05);
+        }
+
+        .btn-ghost {
+            background: rgba(255, 0, 255, 0.2);
+            color: #ff00ff;
+            border: 3px dashed #ff00ff;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 0, 255, 0.4);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .toggle-form a {
+            color: #ff00ff;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .toggle-form a:hover {
+            color: #00ffff;
+        }
+
+        .error-message {
+            background: #ff6b9d;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #ccc;
+            font-weight: bold;
+        }
+
+        /* ===== PANTALLA PRINCIPAL ===== */
+        .main-container {
+            display: none;
+        }
+
+        .main-container.active {
+            display: block;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            text-shadow: none;
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 15, 30, 0.8);
+            border-bottom: 2px solid #00ffff;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 20px;
+            gap: 15px;
+        }
+
+        .user-info {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #00ffff;
+            animation: none;
+            font-size: 0.95em;
+        }
+
+        .user-info span {
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b9d;
+            border: 1px solid #ff6b9d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 10px #ff6b9d;
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: none;
+            text-shadow: none;
+            margin-bottom: 5px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) skewY(-2deg); }
+            50% { transform: translateY(-30px) skewY(2deg); }
+        }
+
+        @keyframes glitch {
+            0%, 100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+            20% { clip-path: polygon(0 20%, 100% 0, 100% 80%, 0 100%); }
+            40% { clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 80%); }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #ff00ff;
+            animation: none;
+            display: inline-block;
+            text-shadow: none;
+            letter-spacing: 2px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .card {
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 8px;
+            padding: 0;
+            margin: 15px 0;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s;
+            animation: none;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            user-select: none;
+        }
+
+        .card-header:hover {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+        }
+
+        .card h2 {
+            color: #00ffff;
+            font-size: 1.4em;
+            margin: 0;
+            animation: none;
+            text-shadow: none;
+        }
+
+        .card-toggle {
+            color: #00ffff;
+            font-size: 1.3em;
+            transition: transform 0.3s;
+        }
+
+        .card-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .card-content {
+            display: none;
+            padding: 20px;
+            animation: none;
+        }
+
+        .card-content.open {
+            display: block;
+        }
+
+        .card p {
+            color: #ccc;
+            font-size: 0.95em;
+            line-height: 1.6;
+            animation: none;
+            margin: 0;
+        }
+
+        .emoji-wall {
+            font-size: 2em;
+            text-align: center;
+            margin: 20px 0;
+            animation: none;
+            line-height: 1.2;
+            opacity: 0.7;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: translateX(0) rotateZ(0deg); }
+            25% { transform: translateX(-15px) rotateZ(-5deg); }
+            75% { transform: translateX(15px) rotateZ(5deg); }
+        }
+
+        .button {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: white;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            animation: none;
+            text-shadow: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .gallery-item {
+            background: rgba(0, 255, 255, 0.1);
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            transform: none;
+            box-shadow: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .gallery-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            color: #00ffff;
+            padding: 30px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            text-shadow: none;
+            position: relative;
+            z-index: 5;
+            animation: none;
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+            background: rgba(15, 15, 30, 0.8);
+        }
+
+        .random-text {
+            display: inline;
+            animation: randomPos 0.2s infinite;
+        }
+
+        @keyframes randomPos {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+            25% { transform: translateY(-5px) translateX(-3px) rotate(-1deg); }
+            75% { transform: translateY(5px) translateX(3px) rotate(1deg); }
+        }
+
+        .counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 255, 255, 0.9);
+            color: #0f0f1e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            z-index: 100;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            animation: none;
+        }
+
+        /* ===== PERFIL DE USUARIO ===== */
+        .profile-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .profile-container.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 60px;
+        }
+
+        .profile-modal {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+            border: 5px solid #ff00ff;
+            animation: popIn 0.5s ease-out;
+            position: relative;
+        }
+
+        .profile-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff0000, #ff6b9d);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .profile-close:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px dashed #ff00ff;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            border: 5px solid #ff00ff;
+            animation: avatarSpin 20s linear infinite;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        @keyframes avatarSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar.guest {
+            background: linear-gradient(45deg, #00ffff, #ffff00);
+        }
+
+        .avatar.registered {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+        }
+
+        .profile-username {
+            font-size: 2em;
+            color: #ff00ff;
+            text-shadow: 2px 2px #00ffff;
+            margin-bottom: 5px;
+        }
+
+        .profile-type {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .profile-type.guest {
+            background: #00ffff;
+            color: #000;
+        }
+
+        .profile-type.registered {
+            background: #ff00ff;
+            color: white;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: rgba(255, 0, 255, 0.1);
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            animation: statPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ff00ff;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .profile-section {
+            margin: 25px 0;
+        }
+
+        .profile-section h3 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+
+        .profile-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .profile-info:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-value {
+            color: #666;
+        }
+
+        .bio-input {
+            width: 100%;
+            padding: 12px;
+            border: 3px solid #ff00ff;
+            border-radius: 10px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 0.95em;
+            resize: vertical;
+            min-height: 80px;
+            background: rgba(255, 0, 255, 0.05);
+        }
+
+        .bio-input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .edit-toggle {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-edit {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s;
+        }
+
+        .btn-edit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .profile-achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border-radius: 10px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: achievementFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes achievementFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .achievement:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        /* ===== SISTEMA GACHA ===== */
+        .gacha-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .gacha-container.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .gacha-modal {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+            border: 5px solid #ff00ff;
+            animation: popIn 0.5s ease-out;
+            position: relative;
+        }
+
+        .gacha-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff0000, #ff6b9d);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .gacha-close:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        .gacha-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px dashed #ff00ff;
+        }
+
+        .gacha-header h2 {
+            color: #ff00ff;
+            font-size: 2.5em;
+            text-shadow: 2px 2px #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .gacha-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gacha-stat {
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .gacha-stat-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #ff00ff;
+        }
+
+        .gacha-stat-label {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .gacha-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #ff00ff;
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .gacha-tab {
+            padding: 8px 15px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #ff00ff;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .gacha-tab.active {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        .gacha-tab:hover {
+            transform: scale(1.05);
+        }
+
+        .gacha-content {
+            display: none;
+        }
+
+        .gacha-content.active {
+            display: block;
+        }
+
+        .gacha-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .gacha-box {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .gacha-box:hover {
+            transform: scale(1.1) rotateY(10deg);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+        }
+
+        .gacha-box:active {
+            transform: scale(0.95);
+        }
+
+        .gacha-box-name {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            text-shadow: 2px 2px #000;
+        }
+
+        .gacha-box-cost {
+            font-size: 1.3em;
+            color: #ffff00;
+            font-weight: bold;
+            text-shadow: 1px 1px #000;
+        }
+
+        .gacha-inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .gacha-item {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            border: 3px solid #ff00ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gacha-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .gacha-rarity-common {
+            background: linear-gradient(135deg, #cccccc, #999999);
+            border-color: #666666;
+        }
+
+        .gacha-rarity-rare {
+            background: linear-gradient(135deg, #4da6ff, #0066ff);
+            border-color: #0066ff;
+        }
+
+        .gacha-rarity-epic {
+            background: linear-gradient(135deg, #9933ff, #6600cc);
+            border-color: #6600cc;
+        }
+
+        .gacha-rarity-legendary {
+            background: linear-gradient(135deg, #ffaa00, #ff6600);
+            border-color: #ff6600;
+        }
+
+        .gacha-rarity-mythic {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-color: #ff00ff;
+            animation: mythicGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes mythicGlow {
+            0%, 100% { box-shadow: 0 0 10px #ff00ff; }
+            50% { box-shadow: 0 0 30px #00ffff; }
+        }
+
+        .gacha-rarity-label {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .gacha-pull-result {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+        }
+
+        .gacha-pull-result.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .gacha-pull-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            border: 5px solid #ff00ff;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+            text-align: center;
+            animation: pullPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes pullPop {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .gacha-pull-item {
+            font-size: 5em;
+            margin: 20px 0;
+            animation: itemBounce 0.8s ease-in-out;
+        }
+
+        @keyframes itemBounce {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.2) translateY(-30px); }
+        }
+
+        .gacha-pull-name {
+            font-size: 1.8em;
+            color: #ff00ff;
+            font-weight: bold;
+            text-shadow: 2px 2px #00ffff;
+            margin: 10px 0;
+        }
+
+        .gacha-pull-rarity {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .rarity-common { background: #666666; }
+        .rarity-rare { background: #0066ff; }
+        .rarity-epic { background: #6600cc; }
+        .rarity-legendary { background: #ff6600; }
+        .rarity-mythic { background: linear-gradient(45deg, #ff00ff, #00ffff); }
+
+        .gacha-pull-text {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .gacha-pull-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s;
+        }
+
+        .gacha-pull-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .gacha-insufficient {
+            background: #ff6b9d;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .gacha-insufficient.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        /* ===== SISTEMA DE MÚSICA ===== */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 0, 255, 0.95);
+            border: 3px solid #00ffff;
+            border-radius: 20px;
+            padding: 15px 20px;
+            z-index: 500;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+            animation: playerBounce 0.5s ease-out;
+            min-width: 300px;
+        }
+
+        @keyframes playerBounce {
+            0% {
+                transform: scale(0) translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .music-header {
+            color: white;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .music-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .music-toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .music-toggle-btn:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .music-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+
+        .music-btn.active {
+            background: #00ffff;
+            color: #ff00ff;
+        }
+
+        .volume-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .volume-icon {
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .music-track-selector {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .track-btn {
+            flex: 1;
+            padding: 5px;
+            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .track-btn.playing {
+            background: #00ffff;
+            color: #ff00ff;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .track-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .music-info {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        .music-settings-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .music-settings-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* ===== MODAL SETTINGS MÚSICA ===== */
+        .music-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            overflow-y: auto;
+        }
+
+        .music-modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .music-settings-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            border: 5px solid #ff00ff;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+            animation: popIn 0.5s ease-out;
+        }
+
+        .music-settings-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: all 0.3s;
+            z-index: 3001;
+        }
+
+        .music-settings-close:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .music-settings-box h2 {
+            color: #ff00ff;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2em;
+            text-shadow: 2px 2px #00ffff;
+        }
+
+        .music-track-input {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+        }
+
+        .music-track-input label {
+            display: block;
+            color: #ff00ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .music-track-input input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 0.9em;
+            box-sizing: border-box;
+        }
+
+        .music-track-input input:focus {
+            outline: none;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .music-save-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s;
+        }
+
+        .music-save-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .music-instructions {
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px dashed #ff00ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .music-instructions strong {
+            color: #ff00ff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas-background"></canvas>
+
+    <!-- ===== PANTALLA DE AUTENTICACIÓN ===== -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box">
+            <!-- FORMULARIO DE LOGIN -->
+            <div id="loginForm">
+                <h1>🌀 TUNG 🌀</h1>
+                <p>Entra al caos definitivo</p>
+
+                <div class="error-message" id="loginError"></div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginUsername">Usuario</label>
+                        <input type="text" id="loginUsername" placeholder="tu_usuario" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="tu_contraseña" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">🔓 ENTRAR 🔓</button>
+                        <button type="button" class="btn btn-ghost" onclick="toggleForms()">
+                            ¿No tienes cuenta? CREA UNA
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider">O</div>
+
+                <button type="button" class="btn btn-secondary" onclick="loginAsGuest()" style="width: 100%;">
+                    👻 ENTRAR COMO INVITADO 👻
+                </button>
+            </div>
+
+            <!-- FORMULARIO DE SIGNUP -->
+            <div id="signupForm" style="display: none;">
+                <h1>✨ CREAR ✨</h1>
+                <p>Únete a la locura</p>
+
+                <div class="error-message" id="signupError"></div>
+
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signupUsername">Usuario</label>
+                        <input type="text" id="signupUsername" placeholder="tu_usuario" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPassword">Contraseña</label>
+                        <input type="password" id="signupPassword" placeholder="tu_contraseña_secreta" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPassword2">Confirmar Contraseña</label>
+                        <input type="password" id="signupPassword2" placeholder="repite_tu_contraseña" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">🎉 CREAR CUENTA 🎉</button>
+                        <button type="button" class="btn btn-ghost" onclick="toggleForms()">
+                            ¿Ya tienes cuenta? ENTRA
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider">O</div>
+
+                <button type="button" class="btn btn-secondary" onclick="loginAsGuest()" style="width: 100%;">
+                    👻 ENTRAR COMO INVITADO 👻
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PANTALLA PRINCIPAL ===== -->
+    <div class="main-container" id="mainContainer">
+        <header>
+            <div class="header-top">
+                <div class="user-info">
+                    👤 Bienvenido: <span id="userDisplay">Usuario</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="logout-btn" onclick="openProfile()" style="background: linear-gradient(45deg, #00ffff, #ff00ff);">
+                        👥 PERFIL 👥
+                    </button>
+                    <button class="logout-btn" onclick="logout()">🚪 SALIR 🚪</button>
+                </div>
+            </div>
+            <h1>🌀 TUNG TUNG SAHUR 🌀</h1>
+            <p class="subtitle">EL BRAINROT SUPREMO</p>
+        </header>
+
+        <div class="container">
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>¿QUÉ ES ESTO?</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <p>
+                        TUNG TUNG SAHUR es el pico máximo de absurdo digital. No tiene sentido.
+                        No necesita tenerlo. Es simplemente... <span class="random-text">TUNG TUNG SAHUR</span>.
+                        Tu cerebro está sufriendo una fragmentación en tiempo real.
+                    </p>
+                </div>
+            </div>
+
+            <div class="emoji-wall">
+                🧠 💨 🌪️ ⚡ 🔥 💀 👻 🌀 ✨ 🎪 🎨
+            </div>
+
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>LAS REGLAS DEL CAOS</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <p>
+                        1️⃣ No preguntes qué es TUNG TUNG SAHUR<br>
+                        2️⃣ Si preguntas, ya es demasiado tarde<br>
+                        3️⃣ TUNG TUNG nunca muere (ya está muerto)<br>
+                        4️⃣ SAHUR es la verdad (y también la mentira)<br>
+                        5️⃣ Todo tiene sentido en el caos total<br>
+                        6️⃣ No hay regla 6️⃣<br>
+                        7️⃣ Espera, hay una regla 6️⃣<br>
+                    </p>
+                </div>
+            </div>
+
+            <div class="emoji-wall">
+                🎺 🎸 🥁 🎹 🎤 🎧 🎵 🎶 🎼
+            </div>
+
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>LA GALERÍA DEL CAOS</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="gallery">
+                        <div class="gallery-item">🌀</div>
+                        <div class="gallery-item">💀</div>
+                        <div class="gallery-item">🧠</div>
+                        <div class="gallery-item">⚡</div>
+                        <div class="gallery-item">🔥</div>
+                        <div class="gallery-item">👽</div>
+                        <div class="gallery-item">🌪️</div>
+                        <div class="gallery-item">✨</div>
+                        <div class="gallery-item">💥</div>
+                        <div class="gallery-item">🎆</div>
+                        <div class="gallery-item">👹</div>
+                        <div class="gallery-item">🤯</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>ESTADÍSTICAS IMPOSIBLES</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <p>
+                        📊 Personas afectadas: ∞²<br>
+                        📈 Neuronas perdidas: 47 CUATRILLONES<br>
+                        🎯 Sentido logrado: -50% (menos que nada)<br>
+                        💫 Diversión obtenida: 9000% x 2000%<br>
+                        🌍 Realidad doblada: SI (y triplicada)<br>
+                        🔮 El futuro: TODO ES TUNG TUNG SAHUR<br>
+                    </p>
+                </div>
+            </div>
+
+            <div class="emoji-wall">
+                👨‍🎨 🎭 🎪 🎨 🖼️ 🎬 📹 🎞️
+            </div>
+
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>CITAS DE PERSONAS QUE NO EXISTEN</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <p>
+                        "TUNG TUNG SAHUR salvó mi vida" - Un fantasma<br>
+                        "Finalmente lo entiendo" - Tu vecino del 5to piso que no existe<br>
+                        "Tiene perfecto sentido" - Las matemáticas rotas<br>
+                        "10/10, 11/10, ∞/∞" - El universo mismo<br>
+                        "¿Qué es TUNG TUNG SAHUR?" - También tu pregunta<br>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h2>SECCIONES ALEATORIAS</h2>
+                    <span class="card-toggle">▼</span>
+                </div>
+                <div class="card-content">
+                    <p>
+                        📌 Los pingüinos no vuelan pero TUNG TUNG SAHUR sí<br>
+                        🌮 Si comes 3 tacos al mismo tiempo, escuchas TUNG TUNG SAHUR<br>
+                        🧲 La gravedad solo funciona si le dices "SAHUR"<br>
+                        🎓 Existe una universidad dedicada solo a esto<br>
+                        🏆 Has ganado el premio Nobel de Confusión (felicitaciones)<br>
+                    </p>
+                </div>
+            </div>
+
+            <center>
+                <button class="button" onclick="activateChaos()">
+                    🌪️ PRESIÓNAME 🌪️
+                </button>
+                <button class="button" onclick="location.reload()">
+                    🔄 NUEVAMENTE 🔄
+                </button>
+                <button class="button" onclick="toggleFullscreenChaos()">
+                    🎆 CAOS EXTREMO 🎆
+                </button>
+            </center>
+
+            <div class="emoji-wall" style="margin-top: 30px;">
+                🌈 🦄 🎉 🎊 🎈 🎁 💝
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 TUNG TUNG SAHUR ENTERPRISES™ (y también ©∞)</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">
+                "En un mundo de caos, SÉ TUNG TUNG SAHUR... O NO... QUIÉN SABE"
+            </p>
+        </footer>
+    </div>
+
+    <!-- ===== MODAL DE PERFIL ===== -->
+    <div class="profile-container" id="profileContainer">
+        <div class="profile-modal">
+            <button class="profile-close" onclick="closeProfile()">✕</button>
+
+            <div class="profile-header">
+                <div class="avatar" id="profileAvatar">👤</div>
+                <div class="profile-username" id="profileUsername">Usuario</div>
+                <span class="profile-type" id="profileType">Usuario</span>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="statClicks">0</div>
+                    <div class="stat-label">Clicks Totales</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statTime">0m</div>
+                    <div class="stat-label">Tiempo en Caos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statLevel">1</div>
+                    <div class="stat-label">Nivel de Caos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statBalance">100</div>
+                    <div class="stat-label">TUNG Coins</div>
+                </div>
+            </div>
+
+            <div class="profile-section" id="profileInfoSection">
+                <h3>📋 Información Personal</h3>
+                <div class="profile-info">
+                    <span class="profile-label">Usuario:</span>
+                    <span class="profile-value" id="infUsername">usuario</span>
+                </div>
+                <div class="profile-info" id="emailInfo">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value" id="infEmail">email@example.com</span>
+                </div>
+                <div class="profile-info">
+                    <span class="profile-label">Miembro desde:</span>
+                    <span class="profile-value" id="infJoinDate">Hoy</span>
+                </div>
+                <div class="profile-info">
+                    <span class="profile-label">Tipo de Cuenta:</span>
+                    <span class="profile-value" id="infAccountType">Registrado</span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>✍️ Biografía</h3>
+                <textarea class="bio-input" id="bioInput" placeholder="Cuéntanos sobre ti..." readonly></textarea>
+            </div>
+
+            <div class="profile-section">
+                <h3>🏆 Logros</h3>
+                <div class="profile-achievements" id="achievementsList">
+                    <div class="achievement" title="Primer Click">🖱️</div>
+                    <div class="achievement" title="100 Clicks">💯</div>
+                    <div class="achievement" title="Miembro VIP">👑</div>
+                    <div class="achievement" title="Caos Total">🌀</div>
+                </div>
+            </div>
+
+            <div class="edit-toggle">
+                <button class="btn-edit" onclick="toggleEditProfile()">✏️ EDITAR PERFIL</button>
+                <button class="btn-edit" id="saveProfileBtn" onclick="saveProfile()" style="display: none;">💾 GUARDAR</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #ff00ff; padding-top: 20px;">
+                <button class="btn-edit" onclick="openGacha()" style="background: linear-gradient(45deg, #ffaa00, #ff6600); width: 100%;">
+                    🎁 ABRIR GACHA (Coleccionar Avatares) 🎁
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DE GACHA ===== -->
+    <div class="gacha-container" id="gachaContainer">
+        <div class="gacha-modal">
+            <button class="gacha-close" onclick="closeGacha()">✕</button>
+
+            <div class="gacha-header">
+                <h2>🎁 SISTEMA DE GACHA 🎁</h2>
+                <p>Colecciona avatares con diferentes rarezas</p>
+            </div>
+
+            <div class="gacha-stats">
+                <div class="gacha-stat">
+                    <div class="gacha-stat-value" id="gachaCoinDisplay">0</div>
+                    <div class="gacha-stat-label">TUNG Coins</div>
+                </div>
+                <div class="gacha-stat">
+                    <div class="gacha-stat-value" id="gachaCollectionDisplay">0</div>
+                    <div class="gacha-stat-label">Avatares</div>
+                </div>
+            </div>
+
+            <div class="gacha-insufficient" id="insufficientWarning">
+                ❌ No tienes suficientes TUNG Coins para esta tirada
+            </div>
+
+            <!-- TABS -->
+            <div class="gacha-tabs">
+                <div class="gacha-tab active" onclick="switchGachaTab('pulls')">🎲 Tiradas</div>
+                <div class="gacha-tab" onclick="switchGachaTab('inventory')">📦 Inventario</div>
+                <div class="gacha-tab" onclick="switchGachaTab('stats')">📊 Estadísticas</div>
+            </div>
+
+            <!-- TAB: TIRADAS -->
+            <div class="gacha-content active" id="pullsTab">
+                <h3 style="color: #ff00ff; margin-bottom: 15px;">Selecciona una caja para tirar</h3>
+                <div class="gacha-boxes">
+                    <div class="gacha-box" onclick="pullGacha('basic', 10)">
+                        <div class="gacha-box-name">Caja Básica</div>
+                        <div class="gacha-box-cost">💰 10 Coins</div>
+                    </div>
+                    <div class="gacha-box" style="background: linear-gradient(135deg, #4da6ff, #0066ff);" onclick="pullGacha('rare', 30)">
+                        <div class="gacha-box-name">Caja Rara</div>
+                        <div class="gacha-box-cost">💰 30 Coins</div>
+                    </div>
+                    <div class="gacha-box" style="background: linear-gradient(135deg, #9933ff, #6600cc);" onclick="pullGacha('epic', 75)">
+                        <div class="gacha-box-name">Caja Épica</div>
+                        <div class="gacha-box-cost">💰 75 Coins</div>
+                    </div>
+                    <div class="gacha-box" style="background: linear-gradient(135deg, #ffaa00, #ff6600);" onclick="pullGacha('legendary', 150)">
+                        <div class="gacha-box-name">Caja Legendaria</div>
+                        <div class="gacha-box-cost">💰 150 Coins</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255, 0, 255, 0.1); border-radius: 10px; border: 2px dashed #ff00ff;">
+                    <h4 style="color: #ff00ff; margin-bottom: 10px;">💡 Cómo obtener Coins:</h4>
+                    <ul style="color: #666; text-align: left; margin-left: 20px;">
+                        <li>🖱️ Cada click en la página = +1 Coin</li>
+                        <li>⏰ Permanece activo para ganar más Coins</li>
+                        <li>🎮 Interactúa con elementos para bonificaciones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB: INVENTARIO -->
+            <div class="gacha-content" id="inventoryTab">
+                <h3 style="color: #ff00ff; margin-bottom: 15px;">Tus Avatares Coleccionados</h3>
+                <div class="gacha-inventory-grid" id="gachaInventory">
+                    <p style="color: #999; grid-column: 1/-1; text-align: center;">Aún no tienes avatares. ¡Haz una tirada!</p>
+                </div>
+            </div>
+
+            <!-- TAB: ESTADÍSTICAS -->
+            <div class="gacha-content" id="statsTab">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div style="background: rgba(255, 0, 255, 0.1); padding: 15px; border-radius: 10px; border: 2px solid #ff00ff;">
+                        <div style="color: #ff00ff; font-weight: bold; font-size: 1.2em;" id="statsTotalPulls">0</div>
+                        <div style="color: #666; font-size: 0.9em;">Tiradas Totales</div>
+                    </div>
+                    <div style="background: rgba(255, 0, 255, 0.1); padding: 15px; border-radius: 10px; border: 2px solid #ff00ff;">
+                        <div style="color: #ff00ff; font-weight: bold; font-size: 1.2em;" id="statsCoinsSpent">0</div>
+                        <div style="color: #666; font-size: 0.9em;">Coins Gastados</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #ff00ff; margin-bottom: 10px;">Rarezas Obtenidas:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div style="background: #cccccc; padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold;">Común</div>
+                            <div style="color: #333; font-size: 1.3em;" id="rarityCountCommon">0</div>
+                        </div>
+                        <div style="background: #0066ff; color: white; padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold;">Raro</div>
+                            <div style="font-size: 1.3em;" id="rarityCountRare">0</div>
+                        </div>
+                        <div style="background: #6600cc; color: white; padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold;">Épico</div>
+                            <div style="font-size: 1.3em;" id="rarityCountEpic">0</div>
+                        </div>
+                        <div style="background: #ff6600; color: white; padding: 10px; border-radius: 8px; text-align: center;">
+                            <div style="font-weight: bold;">Legendario</div>
+                            <div style="font-size: 1.3em;" id="rarityCountLegendary">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RESULTADO DE PULL ===== -->
+    <div class="gacha-pull-result" id="pullResultModal">
+        <div class="gacha-pull-box">
+            <div style="font-size: 2em; margin-bottom: 15px;">🎉 ¡TIRADA! 🎉</div>
+            <div class="gacha-pull-item" id="pullResultEmoji">👤</div>
+            <div class="gacha-pull-name" id="pullResultName">Avatar Name</div>
+            <div class="gacha-pull-rarity" id="pullResultRarity">Rarity</div>
+            <div class="gacha-pull-text" id="pullResultCategory">Categoría</div>
+            <button class="gacha-pull-btn" onclick="closePullResult()">✓ ACEPTAR</button>
+        </div>
+    </div>
+
+    <div id="counter" class="counter" style="display:none;">Clicks: <span id="click-count">0</span></div>
+
+    <!-- ===== REPRODUCTOR DE MÚSICA ===== -->
+    <audio id="audioPlayer" loop style="display: none;"></audio>
+
+    <div class="music-player" id="musicPlayer">
+        <div class="music-header">
+            <div class="music-title" id="musicTitle">🎵 Música</div>
+            <button class="music-toggle-btn" onclick="toggleMusicPlayer()">−</button>
+        </div>
+
+        <div id="musicControls">
+            <div class="music-controls">
+                <button class="music-btn" onclick="toggleMusic()" id="playPauseBtn">▶️ Tocar</button>
+                <button class="music-btn" onclick="prevTrack()">⏮️ Anterior</button>
+                <button class="music-btn" onclick="nextTrack()">Siguiente ⏭️</button>
+            </div>
+
+            <div class="music-track-selector" id="trackSelector">
+                <button class="track-btn playing" data-track="0" onclick="playTrack(0)">Pista 1</button>
+                <button class="track-btn" data-track="1" onclick="playTrack(1)">Pista 2</button>
+                <button class="track-btn" data-track="2" onclick="playTrack(2)">Pista 3</button>
+            </div>
+
+            <div class="volume-control">
+                <span class="volume-icon">🔊</span>
+                <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider" onchange="changeVolume(this.value)">
+                <span style="color: white; font-weight: bold; width: 30px; text-align: right;" id="volumePercent">50%</span>
+            </div>
+
+            <div class="music-info" id="musicInfo">
+                Muted / Haz click en ⚙️ para configurar
+            </div>
+
+            <button class="music-settings-btn" onclick="openMusicSettings()">⚙️ CONFIGURAR MÚSICA</button>
+        </div>
+    </div>
+
+    <!-- ===== MODAL SETTINGS MÚSICA ===== -->
+    <div class="music-modal" id="musicModal">
+        <button class="music-settings-close" onclick="closeMusicSettings()">✕</button>
+        <div class="music-settings-box">
+            <h2>🎵 CONFIGURAR MÚSICA 🎵</h2>
+
+            <div id="tracksContainer">
+                <div class="music-track-input">
+                    <label for="track0">🎵 Pista 1 - URL (ej: https://...mp3)</label>
+                    <input type="text" id="track0" placeholder="https://ejemplo.com/cancion1.mp3">
+                </div>
+                <div class="music-track-input">
+                    <label for="track1">🎵 Pista 2 - URL (ej: https://...mp3)</label>
+                    <input type="text" id="track1" placeholder="https://ejemplo.com/cancion2.mp3">
+                </div>
+                <div class="music-track-input">
+                    <label for="track2">🎵 Pista 3 - URL (ej: https://...mp3)</label>
+                    <input type="text" id="track2" placeholder="https://ejemplo.com/cancion3.mp3">
+                </div>
+            </div>
+
+            <button class="music-save-btn" onclick="saveMusicTracks()">💾 GUARDAR PISTAS</button>
+
+            <div class="music-instructions">
+                <strong>📝 Cómo agregar tu música:</strong><br>
+                1️⃣ Obtén URLs públicas de tus canciones (YouTube Music, SoundCloud, tu servidor, etc.)<br>
+                2️⃣ Pega las URLs en los campos de "Pista 1", "Pista 2" y "Pista 3"<br>
+                3️⃣ Haz click en "GUARDAR PISTAS"<br>
+                4️⃣ Las canciones aparecerán en el reproductor<br><br>
+                <strong>💡 Fuentes de música:</strong><br>
+                • Soundcloud: Botón descargar (algunos tracks)<br>
+                • YouTube: Usa convertidores YouTube to MP3<br>
+                • Servidores personales: Sube tu música<br>
+                • Royalty-free: Pixabay, Freesound, Incompetech<br><br>
+                <strong>⚠️ Nota:</strong> Las URLs deben ser públicamente accesibles y soportar CORS
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== VARIABLES GLOBALES =====
+        let clickCount = 0;
+        let currentUser = null;
+        let userProfiles = {};
+        let sessionStartTime = null;
+        let isEditingProfile = false;
+
+        // ===== SISTEMA DE AUTENTICACIÓN =====
+        function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            signupForm.style.display = signupForm.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+            if (!users[username]) {
+                errorDiv.textContent = '❌ Usuario no encontrado';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            if (users[username].password !== password) {
+                errorDiv.textContent = '❌ Contraseña incorrecta';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            errorDiv.classList.remove('show');
+            currentUser = { username: username, type: 'registered' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            loadUserProfiles();
+            sessionStartTime = Date.now();
+            showMainContainer();
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const password2 = document.getElementById('signupPassword2').value;
+            const errorDiv = document.getElementById('signupError');
+
+            if (password !== password2) {
+                errorDiv.textContent = '❌ Las contraseñas no coinciden';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            if (username.length < 3) {
+                errorDiv.textContent = '❌ El usuario debe tener al menos 3 caracteres';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+            if (users[username]) {
+                errorDiv.textContent = '❌ El usuario ya existe';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            users[username] = { email: email, password: password };
+            localStorage.setItem('users', JSON.stringify(users));
+            errorDiv.classList.remove('show');
+
+            currentUser = { username: username, type: 'registered', email: email };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            loadUserProfiles();
+            sessionStartTime = Date.now();
+            showMainContainer();
+        }
+
+        function loginAsGuest() {
+            const randomId = Math.random().toString(36).substring(7).toUpperCase();
+            currentUser = { username: `Guest_${randomId}`, type: 'guest' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            loadUserProfiles();
+            sessionStartTime = Date.now();
+            showMainContainer();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            clickCount = 0;
+            sessionStartTime = null;
+            document.getElementById('authContainer').classList.remove('hidden');
+            document.getElementById('mainContainer').classList.remove('active');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupPassword2').value = '';
+            document.getElementById('loginError').classList.remove('show');
+            document.getElementById('signupError').classList.remove('show');
+        }
+
+        function showMainContainer() {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('mainContainer').classList.add('active');
+            document.getElementById('userDisplay').textContent = currentUser.username;
+        }
+
+        // ===== SISTEMA DE PERFILES =====
+        function loadUserProfiles() {
+            userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            if (!userProfiles[currentUser.username]) {
+                initializeUserProfile();
+            }
+
+            // Cargar estadísticas de GACHA del usuario
+            const profile = userProfiles[currentUser.username];
+            if (profile.gachaStats) {
+                gachaStats = profile.gachaStats;
+            } else {
+                gachaStats = {
+                    totalPulls: 0,
+                    coinsSpent: 0,
+                    rarity: {
+                        common: 0,
+                        rare: 0,
+                        epic: 0,
+                        legendary: 0,
+                        mythic: 0
+                    }
+                };
+            }
+        }
+
+        function initializeUserProfile() {
+            userProfiles[currentUser.username] = {
+                username: currentUser.username,
+                email: currentUser.email || 'sin@email.com',
+                type: currentUser.type,
+                bio: '',
+                joinDate: new Date().toLocaleDateString('es-ES'),
+                clicks: 0,
+                sessionTime: 0,
+                totalTime: 0,
+                level: 1,
+                coins: 100,
+                achievements: ['🖱️'],
+                gachaCollection: []
+            };
+            saveUserProfiles();
+        }
+
+        function saveUserProfiles() {
+            const profile = userProfiles[currentUser.username];
+            if (profile) {
+                profile.gachaStats = gachaStats;
+            }
+            localStorage.setItem('userProfiles', JSON.stringify(userProfiles));
+        }
+
+        function openProfile() {
+            const profile = userProfiles[currentUser.username];
+
+            // Avatar según tipo de usuario
+            const avatarEl = document.getElementById('profileAvatar');
+            const emojis = ['👤', '😎', '🧠', '💀', '⚡', '🔥', '👽', '🌀'];
+            const avatarEmoji = emojis[currentUser.username.charCodeAt(0) % emojis.length];
+            avatarEl.textContent = avatarEmoji;
+            avatarEl.className = `avatar ${profile.type}`;
+
+            // Información básica
+            document.getElementById('profileUsername').textContent = profile.username;
+            document.getElementById('profileType').textContent = profile.type === 'guest' ? '👻 INVITADO' : '✅ REGISTRADO';
+            document.getElementById('profileType').className = `profile-type ${profile.type}`;
+
+            // Estadísticas
+            document.getElementById('statClicks').textContent = profile.clicks;
+            const sessionMinutes = Math.floor((Date.now() - sessionStartTime) / 60000);
+            document.getElementById('statTime').textContent = sessionMinutes + 'm';
+            document.getElementById('statLevel').textContent = profile.level;
+            document.getElementById('statBalance').textContent = profile.coins;
+
+            // Información personal
+            document.getElementById('infUsername').textContent = profile.username;
+            document.getElementById('infEmail').textContent = profile.email;
+            document.getElementById('infJoinDate').textContent = profile.joinDate;
+            document.getElementById('infAccountType').textContent = profile.type === 'guest' ? 'Invitado' : 'Registrado';
+
+            // Email solo para registrados
+            const emailInfo = document.getElementById('emailInfo');
+            if (profile.type === 'guest') {
+                emailInfo.style.display = 'none';
+            } else {
+                emailInfo.style.display = 'flex';
+            }
+
+            // Bio
+            document.getElementById('bioInput').value = profile.bio;
+
+            // Logros
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            const allAchievements = {
+                '🖱️': 'Primer Click',
+                '💯': '100 Clicks',
+                '👑': 'Miembro VIP',
+                '🌀': 'Caos Total',
+                '⚡': '1000 Clicks',
+                '💎': 'Coleccionista',
+                '🎆': 'Pirotecnia'
+            };
+
+            Object.entries(allAchievements).forEach(([emoji, title]) => {
+                const div = document.createElement('div');
+                div.className = 'achievement';
+                div.textContent = emoji;
+                div.title = title;
+                if (!profile.achievements.includes(emoji)) {
+                    div.style.opacity = '0.3';
+                    div.style.filter = 'grayscale(100%)';
+                }
+                achievementsList.appendChild(div);
+            });
+
+            isEditingProfile = false;
+            document.getElementById('bioInput').readOnly = true;
+            document.getElementById('saveProfileBtn').style.display = 'none';
+            document.querySelector('.edit-toggle .btn-edit').textContent = '✏️ EDITAR PERFIL';
+
+            document.getElementById('profileContainer').classList.add('active');
+        }
+
+        function closeProfile() {
+            document.getElementById('profileContainer').classList.remove('active');
+            isEditingProfile = false;
+            document.getElementById('bioInput').readOnly = true;
+            document.getElementById('saveProfileBtn').style.display = 'none';
+            document.querySelector('.edit-toggle .btn-edit').textContent = '✏️ EDITAR PERFIL';
+        }
+
+        function toggleEditProfile() {
+            isEditingProfile = !isEditingProfile;
+            const bioInput = document.getElementById('bioInput');
+            const saveBtn = document.getElementById('saveProfileBtn');
+            const editBtn = document.querySelector('.edit-toggle .btn-edit:not(#saveProfileBtn)');
+
+            if (isEditingProfile) {
+                bioInput.readOnly = false;
+                bioInput.focus();
+                saveBtn.style.display = 'block';
+                editBtn.textContent = '❌ CANCELAR';
+                bioInput.style.background = 'rgba(255, 0, 255, 0.15)';
+            } else {
+                bioInput.readOnly = true;
+                saveBtn.style.display = 'none';
+                editBtn.textContent = '✏️ EDITAR PERFIL';
+                bioInput.style.background = 'rgba(255, 0, 255, 0.05)';
+                bioInput.value = userProfiles[currentUser.username].bio;
+            }
+        }
+
+        function saveProfile() {
+            const profile = userProfiles[currentUser.username];
+            profile.bio = document.getElementById('bioInput').value;
+
+            // Agregar logro por editar perfil
+            if (!profile.achievements.includes('👑')) {
+                profile.achievements.push('👑');
+            }
+
+            saveUserProfiles();
+            isEditingProfile = false;
+
+            const bioInput = document.getElementById('bioInput');
+            bioInput.readOnly = true;
+            document.getElementById('saveProfileBtn').style.display = 'none';
+            document.querySelector('.edit-toggle .btn-edit').textContent = '✏️ EDITAR PERFIL';
+            bioInput.style.background = 'rgba(255, 0, 255, 0.05)';
+
+            // Animación de éxito
+            const modal = document.querySelector('.profile-modal');
+            modal.style.animation = 'none';
+            setTimeout(() => {
+                modal.style.animation = 'popIn 0.5s ease-out';
+            }, 10);
+        }
+
+        // Comprobar si hay sesión activa
+        window.addEventListener('load', () => {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadUserProfiles();
+                sessionStartTime = Date.now();
+                showMainContainer();
+            }
+        });
+
+        // ===== CANVAS PARA EFECTO DE FONDO =====
+        const canvas = document.getElementById('canvas-background');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawChaos() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = `rgba(0, 255, 255, ${Math.random() * 0.1 + 0.05})`;
+                ctx.lineWidth = Math.random() * 2;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(drawChaos);
+        }
+        drawChaos();
+
+        // ===== EFECTOS INTERACTIVOS =====
+        document.addEventListener('click', function(e) {
+            if (!currentUser || e.target.tagName === 'BUTTON' && !e.target.classList.contains('button')) return;
+
+            clickCount++;
+            const counter = document.getElementById('counter');
+            counter.style.display = 'block';
+            document.getElementById('click-count').textContent = clickCount;
+
+            // Actualizar estadísticas del perfil
+            if (userProfiles[currentUser.username]) {
+                userProfiles[currentUser.username].clicks = clickCount;
+
+                // Agregar logros por clicks
+                const profile = userProfiles[currentUser.username];
+                if (clickCount === 100 && !profile.achievements.includes('💯')) {
+                    profile.achievements.push('💯');
+                }
+                if (clickCount === 1000 && !profile.achievements.includes('⚡')) {
+                    profile.achievements.push('⚡');
+                }
+                if (clickCount === 5000 && !profile.achievements.includes('💎')) {
+                    profile.achievements.push('💎');
+                }
+
+                saveUserProfiles();
+            }
+
+            const emojis = ['🌀', '💀', '⚡', '🔥', '👽', '🧠', '💨', '✨', '💥', '🎆', '👹', '🤯', '💫', '🌪️'];
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                    const el = document.createElement('div');
+                    el.textContent = randomEmoji;
+                    el.style.position = 'fixed';
+                    el.style.left = (e.clientX + (Math.random() - 0.5) * 100) + 'px';
+                    el.style.top = (e.clientY + (Math.random() - 0.5) * 100) + 'px';
+                    el.style.fontSize = (Math.random() * 2 + 1) + 'em';
+                    el.style.pointerEvents = 'none';
+                    el.style.animation = 'float-up 3s forwards';
+                    el.style.zIndex = '50';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 3000);
+                }, i * 100);
+            }
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float-up {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) rotate(0deg) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-200px) rotate(720deg) scale(0.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ===== EASTER EGGS =====
+        let tungCount = 0;
+        let sahurCount = 0;
+
+        document.addEventListener('keydown', function(e) {
+            if (!currentUser) return;
+
+            const key = e.key.toLowerCase();
+
+            if (key === 't') tungCount++;
+            else tungCount = 0;
+
+            if (tungCount === 4) {
+                createExplosion();
+                tungCount = 0;
+            }
+
+            if (key === 's') sahurCount = 1;
+            else if (key === 'a' && sahurCount === 1) sahurCount = 2;
+            else if (key === 'h' && sahurCount === 2) sahurCount = 3;
+            else if (key === 'u' && sahurCount === 3) sahurCount = 4;
+            else if (key === 'r' && sahurCount === 4) {
+                activateChaos();
+                sahurCount = 0;
+            } else sahurCount = 0;
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                spamEmojis();
+            }
+        });
+
+        function createExplosion() {
+            const emojis = ['💥', '🎆', '✨', '⚡', '🔥'];
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('div');
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.position = 'fixed';
+                el.style.left = (window.innerWidth / 2 + (Math.random() - 0.5) * 400) + 'px';
+                el.style.top = (window.innerHeight / 2 + (Math.random() - 0.5) * 400) + 'px';
+                el.style.fontSize = '3em';
+                el.style.pointerEvents = 'none';
+                el.style.animation = 'float-up 3s forwards';
+                el.style.zIndex = '50';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 3000);
+            }
+        }
+
+        function activateChaos() {
+            document.body.style.animation = 'chaos 0.5s';
+            setTimeout(() => document.body.style.animation = '', 500);
+            createExplosion();
+            document.body.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+        }
+
+        function spamEmojis() {
+            const emojis = ['🌀', '💀', '⚡', '🔥', '👽', '🧠', '💨', '✨'];
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    el.style.position = 'fixed';
+                    el.style.left = Math.random() * window.innerWidth + 'px';
+                    el.style.top = Math.random() * window.innerHeight + 'px';
+                    el.style.fontSize = '2em';
+                    el.style.pointerEvents = 'none';
+                    el.style.animation = 'float-up 2s forwards';
+                    el.style.zIndex = '50';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 2000);
+                }, i * 30);
+            }
+        }
+
+        function toggleFullscreenChaos() {
+            document.body.style.animation = 'spin 1s ease-in-out';
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const emojis = ['🌀', '💀', '⚡', '🔥', '👽', '🧠', '💨', '✨', '💥', '🎆'];
+                    const el = document.createElement('div');
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    el.style.position = 'fixed';
+                    el.style.left = Math.random() * window.innerWidth + 'px';
+                    el.style.top = Math.random() * window.innerHeight + 'px';
+                    el.style.fontSize = (Math.random() * 3 + 1) + 'em';
+                    el.style.pointerEvents = 'none';
+                    el.style.animation = 'float-up 4s forwards';
+                    el.style.zIndex = '50';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 4000);
+                }, i * 20);
+            }
+        }
+
+        const spinStyle = document.createElement('style');
+        spinStyle.textContent = `
+            @keyframes spin {
+                0%, 100% { transform: rotateZ(0deg); }
+                25% { transform: rotateZ(90deg); }
+                50% { transform: rotateZ(180deg); }
+                75% { transform: rotateZ(270deg); }
+            }
+            @keyframes chaos {
+                0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+                25% { filter: hue-rotate(90deg) brightness(1.5); }
+                50% { filter: hue-rotate(180deg) brightness(0.8); }
+                75% { filter: hue-rotate(270deg) brightness(1.2); }
+            }
+        `;
+        document.head.appendChild(spinStyle);
+
+        // ===== SISTEMA GACHA =====
+        const gachaItems = {
+            basic: [
+                { name: 'Gato', emoji: '🐱', rarity: 'common', category: 'Animales', image: '' },
+                { name: 'Perro', emoji: '🐶', rarity: 'common', category: 'Animales', image: '' },
+                { name: 'Pato', emoji: '🦆', rarity: 'common', category: 'Animales', image: '' },
+                { name: 'Conejo', emoji: '🐰', rarity: 'common', category: 'Animales', image: '' },
+                { name: 'Cerdo', emoji: '🐷', rarity: 'common', category: 'Animales', image: '' },
+            ],
+            rare: [
+                { name: 'Panda', emoji: '🐼', rarity: 'rare', category: 'Animales', image: '' },
+                { name: 'Koala', emoji: '🐨', rarity: 'rare', category: 'Animales', image: '' },
+                { name: 'Zorro', emoji: '🦊', rarity: 'rare', category: 'Animales', image: '' },
+                { name: 'Pingüino', emoji: '🐧', rarity: 'rare', category: 'Animales', image: '' },
+                { name: 'Astronauta', emoji: '👨‍🚀', rarity: 'rare', category: 'Personajes', image: '' },
+                { name: 'Payaso', emoji: '🤡', rarity: 'rare', category: 'Personajes', image: '' },
+            ],
+            epic: [
+                { name: 'Unicornio', emoji: '🦄', rarity: 'epic', category: 'Mitología', image: '' },
+                { name: 'Dragón', emoji: '🐉', rarity: 'epic', category: 'Mitología', image: '' },
+                { name: 'Fénix', emoji: '🔥', rarity: 'epic', category: 'Mitología', image: '' },
+                { name: 'Mago', emoji: '🧙', rarity: 'epic', category: 'Personajes', image: '' },
+                { name: 'Cíclope', emoji: '👁️', rarity: 'epic', category: 'Mitología', image: '' },
+                { name: 'Samurai', emoji: '🥷', rarity: 'epic', category: 'Personajes', image: '' },
+            ],
+            legendary: [
+                { name: 'Dios Caos', emoji: '⚡', rarity: 'legendary', category: 'Dioses', image: '' },
+                { name: 'Tormenta', emoji: '🌩️', rarity: 'legendary', category: 'Elementos', image: '' },
+                { name: 'Neon Soul', emoji: '💜', rarity: 'legendary', category: 'Abstracto', image: '' },
+                { name: 'Matrix Hacker', emoji: '👾', rarity: 'legendary', category: 'Cibernetico', image: '' },
+                { name: 'Reina Galaxia', emoji: '👑', rarity: 'legendary', category: 'Realeza', image: '' },
+            ],
+            mythic: [
+                { name: 'TUNG SUPREMO', emoji: '🌀', rarity: 'mythic', category: 'TUNG TUNG SAHUR', image: '' },
+                { name: 'Entidad del Caos', emoji: '💫', rarity: 'mythic', category: 'Cósmico', image: '' },
+                { name: 'Mente Colectiva', emoji: '🧠', rarity: 'mythic', category: 'Psíquico', image: '' },
+            ]
+        };
+
+        let gachaStats = {
+            totalPulls: 0,
+            coinsSpent: 0,
+            rarity: {
+                common: 0,
+                rare: 0,
+                epic: 0,
+                legendary: 0,
+                mythic: 0
+            }
+        };
+
+        function openGacha() {
+            const profile = userProfiles[currentUser.username];
+            document.getElementById('gachaCoinDisplay').textContent = profile.coins;
+            document.getElementById('gachaCollectionDisplay').textContent = profile.gachaCollection ? profile.gachaCollection.length : 0;
+
+            document.getElementById('statsTotalPulls').textContent = gachaStats.totalPulls;
+            document.getElementById('statsCoinsSpent').textContent = gachaStats.coinsSpent;
+            document.getElementById('rarityCountCommon').textContent = gachaStats.rarity.common;
+            document.getElementById('rarityCountRare').textContent = gachaStats.rarity.rare;
+            document.getElementById('rarityCountEpic').textContent = gachaStats.rarity.epic;
+            document.getElementById('rarityCountLegendary').textContent = gachaStats.rarity.legendary;
+
+            updateGachaInventory();
+            document.getElementById('gachaContainer').classList.add('active');
+        }
+
+        function closeGacha() {
+            document.getElementById('gachaContainer').classList.remove('active');
+            saveUserProfiles();
+        }
+
+        function switchGachaTab(tabName) {
+            document.querySelectorAll('.gacha-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+            document.querySelectorAll('.gacha-tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function pullGacha(type, cost) {
+            const profile = userProfiles[currentUser.username];
+
+            if (profile.coins < cost) {
+                const warning = document.getElementById('insufficientWarning');
+                warning.classList.add('show');
+                setTimeout(() => warning.classList.remove('show'), 3000);
+                return;
+            }
+
+            profile.coins -= cost;
+            gachaStats.totalPulls++;
+            gachaStats.coinsSpent += cost;
+
+            const rarityTable = {
+                basic: { common: 85, rare: 14, epic: 0.9, legendary: 0.1 },
+                rare: { common: 40, rare: 45, epic: 14, legendary: 1 },
+                epic: { common: 10, rare: 35, epic: 50, legendary: 5 },
+                legendary: { common: 5, rare: 15, epic: 40, legendary: 40 }
+            };
+
+            const rates = rarityTable[type];
+            const roll = Math.random() * 100;
+            let selectedRarity = 'common';
+
+            let cumulative = 0;
+            for (const [rarity, rate] of Object.entries(rates)) {
+                cumulative += rate;
+                if (roll <= cumulative) {
+                    selectedRarity = rarity;
+                    break;
+                }
+            }
+
+            const poolItems = gachaItems[selectedRarity === 'mythic' ? 'mythic' : selectedRarity === 'legendary' ? 'legendary' : selectedRarity === 'epic' ? 'epic' : selectedRarity === 'rare' ? 'rare' : 'basic'];
+            const item = poolItems[Math.floor(Math.random() * poolItems.length)];
+
+            if (!profile.gachaCollection) {
+                profile.gachaCollection = [];
+            }
+            profile.gachaCollection.push(item);
+
+            gachaStats.rarity[selectedRarity]++;
+
+            displayPullResult(item);
+            saveUserProfiles();
+
+            document.getElementById('gachaCoinDisplay').textContent = profile.coins;
+            document.getElementById('gachaCollectionDisplay').textContent = profile.gachaCollection.length;
+        }
+
+        function displayPullResult(item) {
+            document.getElementById('pullResultEmoji').textContent = item.emoji;
+            document.getElementById('pullResultName').textContent = item.name;
+            document.getElementById('pullResultRarity').textContent = item.rarity.toUpperCase();
+            document.getElementById('pullResultCategory').textContent = '📂 ' + item.category;
+
+            const rarityClass = 'rarity-' + item.rarity;
+            document.getElementById('pullResultRarity').className = `gacha-pull-rarity ${rarityClass}`;
+
+            const modal = document.getElementById('pullResultModal');
+            modal.classList.add('active');
+
+            // Crear confeti
+            createPullConfetti();
+        }
+
+        function closePullResult() {
+            document.getElementById('pullResultModal').classList.remove('active');
+        }
+
+        function createPullConfetti() {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = ['🎉', '✨', '🌟', '💫', '⭐'];
+                    const el = document.createElement('div');
+                    el.textContent = confetti[Math.floor(Math.random() * confetti.length)];
+                    el.style.position = 'fixed';
+                    el.style.left = Math.random() * window.innerWidth + 'px';
+                    el.style.top = Math.random() * window.innerHeight + 'px';
+                    el.style.fontSize = '2em';
+                    el.style.pointerEvents = 'none';
+                    el.style.animation = 'float-up 3s forwards';
+                    el.style.zIndex = '2500';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function updateGachaInventory() {
+            const profile = userProfiles[currentUser.username];
+            const inventory = document.getElementById('gachaInventory');
+
+            if (!profile.gachaCollection || profile.gachaCollection.length === 0) {
+                inventory.innerHTML = '<p style="color: #999; grid-column: 1/-1; text-align: center;">Aún no tienes avatares. ¡Haz una tirada!</p>';
+                return;
+            }
+
+            inventory.innerHTML = '';
+            profile.gachaCollection.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `gacha-item gacha-rarity-${item.rarity}`;
+                div.textContent = item.emoji;
+                div.title = `${item.name} - ${item.rarity}`;
+                div.style.cursor = 'pointer';
+                div.onclick = () => {
+                    const newAvatar = document.getElementById('profileAvatar');
+                    newAvatar.textContent = item.emoji;
+                    const emojis = ['🌀', '💀', '⚡', '🔥', '👽', '🧠', '💨', '✨'];
+                    newAvatar.style.animation = 'none';
+                    setTimeout(() => {
+                        newAvatar.style.animation = 'avatarSpin 20s linear infinite';
+                    }, 10);
+                };
+                inventory.appendChild(div);
+            });
+        }
+
+        // ===== SISTEMA DE CARDS COLAPSABLES =====
+        function toggleCard(headerElement) {
+            const content = headerElement.nextElementSibling;
+            const toggle = headerElement.querySelector('.card-toggle');
+
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                toggle.classList.remove('open');
+            } else {
+                content.classList.add('open');
+                toggle.classList.add('open');
+            }
+        }
+
+        // ===== SISTEMA DE MÚSICA =====
+        let musicTracks = ['', '', ''];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        function loadMusicTracks() {
+            const saved = localStorage.getItem('musicTracks');
+            if (saved) {
+                musicTracks = JSON.parse(saved);
+                updateTrackInfo();
+            }
+        }
+
+        function saveMusicTracks() {
+            musicTracks = [
+                document.getElementById('track0').value.trim(),
+                document.getElementById('track1').value.trim(),
+                document.getElementById('track2').value.trim()
+            ];
+
+            localStorage.setItem('musicTracks', JSON.stringify(musicTracks));
+            updateTrackInfo();
+            closeMusicSettings();
+
+            // Notificación visual
+            const btn = document.querySelector('.music-save-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✓ ¡GUARDADO!';
+            btn.style.background = 'linear-gradient(45deg, #00ff00, #00dd00)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        function openMusicSettings() {
+            document.getElementById('track0').value = musicTracks[0] || '';
+            document.getElementById('track1').value = musicTracks[1] || '';
+            document.getElementById('track2').value = musicTracks[2] || '';
+            document.getElementById('musicModal').classList.add('active');
+        }
+
+        function closeMusicSettings() {
+            document.getElementById('musicModal').classList.remove('active');
+        }
+
+        function updateTrackInfo() {
+            const track = musicTracks[currentTrackIndex];
+            if (track) {
+                const fileName = track.split('/').pop().split('?')[0] || `Pista ${currentTrackIndex + 1}`;
+                document.getElementById('musicTitle').textContent = `🎵 ${fileName.substring(0, 20)}...`;
+                document.getElementById('musicInfo').textContent = `Pista ${currentTrackIndex + 1}/3`;
+            } else {
+                document.getElementById('musicTitle').textContent = '🎵 Sin música';
+                document.getElementById('musicInfo').textContent = 'Configura pistas en ⚙️';
+            }
+        }
+
+        function toggleMusic() {
+            const track = musicTracks[currentTrackIndex];
+            if (!track) {
+                alert('⚠️ No hay música configurada. Haz click en ⚙️ para agregar pistas');
+                return;
+            }
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                document.getElementById('playPauseBtn').textContent = '▶️ Tocar';
+            } else {
+                if (audioPlayer.src !== track) {
+                    audioPlayer.src = track;
+                }
+                audioPlayer.play().catch(err => {
+                    console.error('Error al reproducir:', err);
+                    alert('⚠️ No se pudo reproducir la música. Verifica que la URL sea válida y pública.');
+                });
+                isPlaying = true;
+                document.getElementById('playPauseBtn').textContent = '⏸️ Pausar';
+            }
+        }
+
+        function playTrack(index) {
+            currentTrackIndex = index;
+            updateTrackInfo();
+
+            // Actualizar botones de pistas
+            document.querySelectorAll('.track-btn').forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('playing');
+                } else {
+                    btn.classList.remove('playing');
+                }
+            });
+
+            const track = musicTracks[index];
+            if (track) {
+                audioPlayer.src = track;
+                audioPlayer.play().catch(err => {
+                    console.error('Error al reproducir:', err);
+                });
+                isPlaying = true;
+                document.getElementById('playPauseBtn').textContent = '⏸️ Pausar';
+            } else {
+                alert('⚠️ Esta pista no está configurada. Haz click en ⚙️');
+            }
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % 3;
+            playTrack(currentTrackIndex);
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + 3) % 3;
+            playTrack(currentTrackIndex);
+        }
+
+        function changeVolume(value) {
+            audioPlayer.volume = value / 100;
+            document.getElementById('volumePercent').textContent = value + '%';
+        }
+
+        function toggleMusicPlayer() {
+            const controls = document.getElementById('musicControls');
+            if (controls.style.display === 'none') {
+                controls.style.display = 'block';
+            } else {
+                controls.style.display = 'none';
+            }
+        }
+
+        // Cargar pistas al iniciar
+        window.addEventListener('load', () => {
+            loadMusicTracks();
+            updateTrackInfo();
+            changeVolume(50);
+        });
+    </script>
+</body>
+</html>
